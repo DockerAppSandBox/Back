@@ -1,4 +1,4 @@
-# DockerSandBos Api
+# DockerSandBox Api
 and API to manage the connexion and the bdd, (users and pictures)
 
 ## Prerequisites
