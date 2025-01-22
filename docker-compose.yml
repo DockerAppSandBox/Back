@@ -1,0 +1,33 @@
+services:
+  mydb:
+    image: postgres
+    container_name: bdd
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      mynetwork: 
+        ipv4_address: 172.28.0.3
+
+  back:
+    build: 
+      context: .
+      dockerfile: dockerfile-dev
+    volumes:
+      - ./src:/app/src
+      - ./node_modules:/app/node_modules
+    ports: 
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      - mydb
+    networks:
+      mynetwork:
+        ipv4_address: 172.28.0.2
+
+networks:
+  mynetwork:
+    external: true
