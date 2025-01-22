@@ -29,14 +29,14 @@ pnpm install
 pnpm run dev
 ```
 
-## Run in container environment
-```bash
-pnpm run start
-```
-
 ## Run in docker environment
 
 #### Make sure u have docker in your computer
+
+### Make sur u have the network create 
+```bash
+docker network create --subnet=172.28.0.0/16 mynetwork
+```
 
 #### start the container (API and BDD)
 
