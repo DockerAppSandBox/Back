@@ -3,7 +3,8 @@ name: Postgre Docker CI/CD
 on:
   push:
     branches:
-      - feat/build-pipeline
+      - develop
+      - main
 
 jobs:
   setup-docker-tag:
