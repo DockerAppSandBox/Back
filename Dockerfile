@@ -19,7 +19,7 @@ FROM node:20.10.0-alpine AS runner
 WORKDIR /app
 
 COPY --from=build /app/dist /app/dist
-COPY --from=build /app/node_modules /app/node_modules
+COPY --from=builder /app/package-lock.json package-lock.json
 COPY --from=build /app/package.json /app/package.json
 COPY --from=build /app/prisma /app/prisma
 
