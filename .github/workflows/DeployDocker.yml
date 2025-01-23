@@ -6,7 +6,6 @@ on:
       - feat/build-pipeline
 
 jobs:
-  # Job 1: Définir le tag Docker en fonction de la branche
   setup-docker-tag:
     runs-on: ubuntu-latest
     outputs:
@@ -16,13 +15,12 @@ jobs:
         id: set-tag
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-            echo "tag=prod" >> $GITHUB_ENV
+            echo "tag=prod" >> $GITHUB_OUTPUT
           elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
-            echo "tag=pre-prod" >> $GITHUB_ENV
+            echo "tag=pre-prod" >> $GITHUB_OUTPUT
           else
-            echo "tag=dev" >> $GITHUB_ENV
+            echo "tag=dev" >> $GITHUB_OUTPUT
           fi
-          echo "docker_tag=${{ env.tag }}" >> $GITHUB_OUTPUT
 
   # Job 2: Installer les dépendances et construire le projet
   install-dependencies-and-build:
@@ -41,15 +39,13 @@ jobs:
       - name: Installer les dépendances
         run: npm ci --frozen-lockfile
 
-      - name: Set up .env for Prisma
-        run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env
-
       - name: Construire le projet
         run: npm run build
 
+
   # Job 3: Construire et déployer l'image Docker
   build-and-deploy-image:
-    needs:
+    needs: 
       - setup-docker-tag
       - install-dependencies-and-build
     runs-on: ubuntu-latest
