@@ -14,6 +14,8 @@ RUN npm install -g typescript
 
 RUN npx prisma generate
 
+RUN npm i --save-dev @types/cors @types/compression @types/express @types/node
+
 RUN npm run build
 
 RUN rm -rf node_modules
