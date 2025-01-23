@@ -1,5 +1,10 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth';
+import {
+  NotFoundError,
+  InternalServerError,
+  BadRequestError,
+} from "../http_code/error-code";
 
 export class AuthController {
   static async register(req: Request, res: Response) {
@@ -7,7 +12,11 @@ export class AuthController {
       const result = await AuthService.register(req.body);
       res.status(201).json(result);
     } catch (error) {
-      res.status(error.statusCode || 500 ).json({ message: error.message });
+      if (error instanceof InternalServerError) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Unknown error" });
+      }
     }
   }
 
@@ -16,7 +25,11 @@ export class AuthController {
       const result = await AuthService.login(req.body);
       res.status(200).json(result);
     } catch (error) {
-      res.status(error.statusCode || 500).json({ message: error.message });
+      if (error instanceof InternalServerError) {
+        res.status(error.statusCode).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Unknown error" });
+      }
     }
   }
 }
