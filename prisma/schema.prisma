@@ -8,8 +8,30 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String  @id @default(uuid())
   email     String  @unique
   name      String?
   createdAt DateTime @default(now())
+  votes     ImageVote[]
+}
+
+model Image {
+  id            Int         @id @default(autoincrement())
+  imageData     Bytes       @map("image_data")
+  createdAt     DateTime    @default(now()) @map("created_at")
+  likesCount    Int         @default(0) @map("likes_count")
+  dislikesCount Int         @default(0) @map("dislikes_count")
+  votes         ImageVote[]
+}
+
+model ImageVote {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String   
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId   Int
+  like      Boolean
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, imageId])
 }
