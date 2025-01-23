@@ -1,0 +1,31 @@
+import bcrypt from 'bcrypt';
+import  prisma from '../config/database';
+import { RegisterUserDTO, LoginUserDTO, AuthResponse } from '../entity/auth';
+import generateToken from '../utils/auth';
+import { NotFoundError, BadRequestError } from '../http_code/error-code';
+
+export class AuthService {
+    static async register(data: RegisterUserDTO): Promise<AuthResponse> {
+        const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
+        if (existingUser) throw new BadRequestError('Email already in use');
+      
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        const newUser = await prisma.user.create({
+          data: { email: data.email, password: hashedPassword },
+        });
+      
+        const token = generateToken({ id: newUser.id, email: newUser.email });
+        return { user: { id: newUser.id, email: newUser.email }, token };
+      }
+      
+      static async login(data: LoginUserDTO): Promise<AuthResponse> {
+        const user = await prisma.user.findUnique({ where: { email: data.email } });
+        if (!user) throw new NotFoundError('Invalid email or password');
+      
+        const isValidPassword = await bcrypt.compare(data.password, user.password);
+        if (!isValidPassword) throw new BadRequestError('Invalid email or password');
+      
+        const token = generateToken({ id: user.id, email: user.email });
+        return { user: { id: user.id, email: user.email }, token };
+      }
+}
