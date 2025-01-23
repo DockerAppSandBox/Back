@@ -39,6 +39,9 @@ jobs:
       - name: Installer les dépendances
         run: npm ci --frozen-lockfile
 
+       - name: Set up .env for Prisma
+        run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" > .env
+
       - name: Construire le projet
         run: npm run build
 
