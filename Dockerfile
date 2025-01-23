@@ -12,7 +12,7 @@ COPY . .
 
 RUN npm install -g typescript
 
-RUN prisma generate
+RUN npx prisma generate
 
 RUN npm run build
 
