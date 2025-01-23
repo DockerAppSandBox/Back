@@ -10,9 +10,9 @@ COPY prisma ./prisma
 
 COPY . .
 
-RUN ls -alh
+RUN npm install -g typescript
 
-RUN npm run build --verbose
+RUN npm run build
 
 RUN npm run build
 
