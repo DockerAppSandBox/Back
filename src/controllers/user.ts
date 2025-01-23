@@ -41,7 +41,7 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Obtenir un utilisateur par ID
-  static async getUserById(req: Request<{ id: string }>, res: Response): Promise<void> {
+  static async getUserById(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
         const user = await UserService.getUserById(req.params.id);
@@ -60,7 +60,7 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Créer un utilisateur
-  static async createUser(req: Request<{}, {}, CreateUserDTO>, res: Response): Promise<void> {
+  static async createUser(req: Request, res: Response): Promise<void> {
       const { email, name } = req.body;
 
       if (!email) {
@@ -80,7 +80,7 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Mettre à jour un utilisateur
-  static async updateUser(req: Request<{ id: string }, {}, UpdateUserDTO>, res: Response): Promise<void> {
+  static async updateUser(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       const { id } = req.params;
       const { name } = req.body;
@@ -104,7 +104,7 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Supprimer un utilisateur
-  static async deleteUser(req: Request<{ id: string }>, res: Response): Promise<void> {
+  static async deleteUser(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
         const deletedUser = await UserService.deleteUser(req.params.id);
