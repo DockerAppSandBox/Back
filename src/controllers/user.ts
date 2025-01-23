@@ -9,7 +9,7 @@ import {
   } from "../http_code/error-code";
 
 import { CreateUserDTO, UpdateUserDTO } from "../entity/user";
-import verifyToken from "../utils/verify_token";
+import verifyToken from "../middleware/auth";
 
 export default class UserController {
 
@@ -61,11 +61,10 @@ static async GetTest(req: Request, res: Response): Promise<void> {
 
   // Créer un utilisateur
   static async createUser(req: Request<{}, {}, CreateUserDTO>, res: Response): Promise<void> {
-    verifyToken(req, res, async () => {
       const { email, name } = req.body;
 
       if (!email) {
-        return res.status(400).json({ error: "L'email est requis" });
+        res.status(400).json({ error: "L'email est requis" });
       }
 
       try {
@@ -73,12 +72,11 @@ static async GetTest(req: Request, res: Response): Promise<void> {
         res.status(201).json(newUser);
       } catch (error: any) {
         if (error.message === "EMAIL_ALREADY_EXISTS") {
-          return res.status(400).json({ error: "L'email est déjà utilisé" });
+          res.status(400).json({ error: "L'email est déjà utilisé" });
         }
 
         res.status(500).json({ error: "Erreur interne du serveur" });
-      }
-    });
+      };
   }
 
   // Mettre à jour un utilisateur

@@ -4,8 +4,7 @@ import helmet from "helmet";
 import compression from 'compression';
 import { BadRequestError, InternalServerError } from "../http_code/error-code";
 import express, { Request, Response, NextFunction } from "express"; 
-
-import user from "../routes/user"
+import authRoutes from '../routes/auth';
 
 dotenv.config();
 
@@ -18,7 +17,7 @@ app.use(helmet());
 app.use(compression());
 
 // Routes
-app.use("/user", user);
+app.use("/user", authRoutes);
 
 
 // Middleware global de gestion des erreurs (a implémenter pour éviter la gestion des trycatch a chaque controller a toi de voir)
