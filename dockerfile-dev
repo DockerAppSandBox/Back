@@ -14,7 +14,7 @@ COPY prisma ./prisma
 COPY . .
 
 # Install dependencies
-RUN pnpm install
+RUN npm install
 
 # Start the api in dev mode
-CMD pnpm run build-container
+CMD npm run build-container
