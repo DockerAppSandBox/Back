@@ -8,7 +8,7 @@
     "build-container": "npx prisma migrate deploy && npx prisma generate && pnpm dev",
     "start": "pnpm i && docker compose up --build -d",
     "dev": "pnpx nodemon src/index.ts",
-    "build": "tsc",
+    "build": "npx prisma migrate deploy && npx prisma generate && tsc",
     "prod": "node dist/index.js",
     "migration": "npx prisma migrate deploy && npx prisma generate"
   },
