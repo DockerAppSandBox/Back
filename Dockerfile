@@ -10,7 +10,6 @@ COPY prisma ./prisma
 
 COPY . .
 
-RUN npm install -g typescript
 
 RUN npx prisma generate
 
