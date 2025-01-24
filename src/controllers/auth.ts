@@ -14,7 +14,7 @@ export class AuthController {
       if (error instanceof BadRequestError) {
         res.status(error.statusCode).json({ error: error.message });
       }
-      if (error instanceof InternalServerError) {
+      else if (error instanceof InternalServerError) {
         res.status(error.statusCode).json({ error: error.message });
       } else {
         res.status(500).json({ error: "Unknown error" });
