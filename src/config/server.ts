@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(compression());
 
 // Routes
-app.use("/user", authRoutes);
+app.use("/auth", authRoutes);
 
 
 // Middleware global de gestion des erreurs (a implémenter pour éviter la gestion des trycatch a chaque controller a toi de voir)

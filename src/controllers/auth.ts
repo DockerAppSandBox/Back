@@ -1,9 +1,7 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth';
 import {
-  NotFoundError,
   InternalServerError,
-  BadRequestError,
 } from "../http_code/error-code";
 
 export class AuthController {
