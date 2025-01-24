@@ -7,6 +7,8 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       mynetwork: 
         ipv4_address: 172.28.0.3
@@ -22,6 +24,7 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - mydb
     networks:
@@ -31,3 +34,7 @@ services:
 networks:
   mynetwork:
     external: true
+
+volumes:
+  postgres_data:
+    driver: local
