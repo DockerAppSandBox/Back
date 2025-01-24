@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import cors from 'cors'
 import helmet from "helmet";
 import compression from 'compression';
@@ -6,8 +5,6 @@ import { BadRequestError, InternalServerError } from "../http_code/error-code";
 import express, { Request, Response, NextFunction } from "express"; 
 import authRoutes from '../routes/auth';
 import UserRoutes from '../routes/user'
-
-dotenv.config();
 
 const app = express();
 
