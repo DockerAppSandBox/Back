@@ -17,7 +17,7 @@ model User {
 
 model Image {
   id            Int         @id @default(autoincrement())
-  imageData     Bytes       @map("image_data")
+  imageData     String      @map("image_data")
   createdAt     DateTime    @default(now()) @map("created_at")
   likesCount    Int         @default(0) @map("likes_count")
   dislikesCount Int         @default(0) @map("dislikes_count")

@@ -16,7 +16,7 @@ export default class ImageService {
             const images = await prisma.image.findMany();
             const formattedImages = images.map(image => ({
                 ...image,
-                imageData: Buffer.from(image.imageData), // Conversion ici
+                imageData: Buffer.from(image.imageData).toString('base64'),
             }));
             return formattedImages;
         } catch (error) {
@@ -28,46 +28,39 @@ export default class ImageService {
         try {
             const image = await prisma.image.findUnique({ where: { id } });
             if (!image) {
-                throw new Error('Image not found.');
+                throw new Error("Image not found.");
             }
-            return {
-                ...image,
-                imageData: Buffer.from(image.imageData),
-            };
+            return image;
         } catch (error) {
-            throw new Error('Error fetching image.');
+            throw new Error("Error fetching image.");
         }
     }
 
     static async createImage(data: CreateImageDTO): Promise<Image> {
         try {
-            const createdImage = await prisma.image.create({
+            const image = await prisma.image.create({
                 data: {
-                    ...data,
-                    imageData: Buffer.from(data.imageData),
+                    imageData: data.imageData, // Base64 string
                 },
             });
-            return {
-                ...createdImage,
-                imageData: Buffer.from(createdImage.imageData),
-            };
+            return image;
         } catch (error) {
-            throw new Error('Error creating image.');
+            throw new Error("Error creating image.");
         }
     }
 
     static async updateImage(id: number, data: UpdateImageDTO): Promise<Image> {
         try {
-            const updatedImage = await prisma.image.update({
+            const image = await prisma.image.update({
                 where: { id },
-                data,
+                data: {
+                    ...data,
+                    imageData: data.imageData || undefined, // Update Base64 string if provided
+                },
             });
-            return {
-                ...updatedImage,
-                imageData: Buffer.from(updatedImage.imageData),
-            };
+            return image;
         } catch (error) {
-            throw new Error('Error updating image.');
+            throw new Error("Error updating image.");
         }
     }
 
@@ -75,47 +68,41 @@ export default class ImageService {
         try {
             await prisma.image.delete({ where: { id } });
         } catch (error) {
-            throw new Error('Error deleting image.');
+            throw new Error("Error deleting image.");
         }
     }
 
     // Méthode pour liker une image
     static async likeImage(id: number): Promise<Image> {
         try {
-            const updatedImage = await prisma.image.update({
+            const image = await prisma.image.update({
                 where: { id },
                 data: {
                     likesCount: {
-                        increment: 1
-                    }
-                }
+                        increment: 1,
+                    },
+                },
             });
-            return {
-                ...updatedImage,
-                imageData: Buffer.from(updatedImage.imageData),
-            };
+            return image;
         } catch (error) {
-            throw new Error('Error liking image.');
+            throw new Error("Error liking image.");
         }
     }
 
     // Méthode pour disliker une image
     static async dislikeImage(id: number): Promise<Image> {
         try {
-            const updatedImage = await prisma.image.update({
+            const image = await prisma.image.update({
                 where: { id },
                 data: {
                     dislikesCount: {
-                        increment: 1
-                    }
-                }
+                        increment: 1,
+                    },
+                },
             });
-            return {
-                ...updatedImage,
-                imageData: Buffer.from(updatedImage.imageData),
-            };
+            return image;
         } catch (error) {
-            throw new Error('Error disliking image.');
+            throw new Error("Error disliking image.");
         }
     }
 }

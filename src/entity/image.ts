@@ -1,23 +1,17 @@
 export interface Image {
     id: number;
-    imageData: Buffer;
+    imageData: string;
     createdAt: Date;
     likesCount: number;
     dislikesCount: number;
-}
-export interface Image {
-    id: number;
-    imageData: Buffer;
-    createdAt: Date;
-    likesCount: number;
-    dislikesCount: number;
-}
-
-export interface CreateImageDTO {
-    imageData: Buffer;
-}
-
-export interface UpdateImageDTO {
+  }
+  
+  export interface CreateImageDTO {
+    imageData: string;
+  }
+  
+  export interface UpdateImageDTO {
+    imageData?: string;
     likesCount?: number;
     dislikesCount?: number;
-}
+  }

@@ -11,7 +11,7 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Image" (
     "id" SERIAL NOT NULL,
-    "image_data" BYTEA NOT NULL,
+    "image_data" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "likes_count" INTEGER NOT NULL DEFAULT 0,
     "dislikes_count" INTEGER NOT NULL DEFAULT 0,
