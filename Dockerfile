@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN npm install --production
+RUN npm ci --frozen-lockfile 
 
 COPY prisma ./prisma
 
@@ -18,8 +18,6 @@ RUN npm i --save-dev @types/cors @types/compression @types/express @types/node
 
 RUN npm run build
 
-RUN rm -rf node_modules
-
 FROM node:20.10.0-alpine AS runner
 
 WORKDIR /app
@@ -29,9 +27,10 @@ COPY --from=builder /app/package-lock.json package-lock.json
 COPY --from=builder /app/package.json package.json
 COPY --from=builder /app/prisma prisma
 
-ENV NODE_ENV=production
 
-RUN npm ci --frozen-lockfile 
+RUN npm ci --production --frozen-lockfile
 RUN npm cache clean --force
+
+ENV NODE_ENV=production
 
 CMD ["npm", "run", "start"]
