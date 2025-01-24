@@ -24,10 +24,10 @@ FROM node:20.10.0-alpine AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/dist dist
 COPY --from=builder /app/package-lock.json package-lock.json
-COPY --from=builder /app/package.json /app/package.json
-COPY --from=builder /app/prisma /app/prisma
+COPY --from=builder /app/package.json package.json
+COPY --from=builder /app/prisma prisma
 
 ENV NODE_ENV=production
 
