@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import ImageService from '../services/image';
-import { PrismaClient, Prisma } from "@prisma/client";
+import ImageVoteService from '../services/imageVote';
 
 import {
   NotFoundError,
@@ -15,8 +14,8 @@ export default class ImageVoteController  {
   static async voteForImage(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const images = await ImageVoteService.voteForImage();
-        res.status(200).json(images);
+        const imageVote  = await ImageVoteService.voteForImage(req.body);
+        res.status(200).json(imageVote);
       } catch (error) {
         if (error instanceof InternalServerError) {
           res.status(error.statusCode).json({ error: error.message });
@@ -27,10 +26,25 @@ export default class ImageVoteController  {
     });
   }
 
-  static async getImageById(req: Request, res: Response): Promise<void> {
+  static async getVotesByImageId(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const image = await ImageService.getImageById(+req.params.id);
+        const votes  = await ImageVoteService.getVotesByImageId(+req.params.imageId);
+        res.status(200).json(votes);
+      } catch (error) {
+        if (error instanceof InternalServerError) {
+          res.status(error.statusCode).json({ error: error.message });
+        } else {
+          res.status(500).json({ error: "Unknown error" });
+        }
+      }
+    });
+  }
+
+  static async updateVote(req: Request, res: Response): Promise<void> {
+    verifyToken(req, res, async () => {
+      try {
+        const image = await ImageVoteService.updateVote(req.body);
         res.status(200).json(image);
       } catch (error) {
         if (error instanceof InternalServerError) {
@@ -42,71 +56,11 @@ export default class ImageVoteController  {
     });
   }
 
-  static async createImage(req: Request, res: Response): Promise<void> {
+  static async deleteVote(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const newImage = await ImageService.createImage(req.body);
-        res.status(201).json(newImage);
-      } catch (error) {
-        if (error instanceof InternalServerError) {
-          res.status(error.statusCode).json({ error: error.message });
-        } else {
-          res.status(500).json({ error: "Unknown error" });
-        }
-      }
-    });
-  }
-
-  static async updateImage(req: Request, res: Response): Promise<void> {
-    verifyToken(req, res, async () => {
-      try {
-        const image = await ImageService.updateImage(+req.params.id, req.body);
-        res.status(200).json(image);
-      } catch (error) {
-        if (error instanceof InternalServerError) {
-          res.status(error.statusCode).json({ error: error.message });
-        } else {
-          res.status(500).json({ error: "Unknown error" });
-        }
-      }
-    });
-  }
-
-  static async deleteImage(req: Request, res: Response): Promise<void> {
-    verifyToken(req, res, async () => {
-      try {
-        const image = await ImageService.deleteImage(+req.params.id);
-        res.status(200).json(image);
-      } catch (error) {
-        if (error instanceof InternalServerError) {
-          res.status(error.statusCode).json({ error: error.message });
-        } else {
-          res.status(500).json({ error: "Unknown error" });
-        }
-      }
-    });
-  }
-
-  static async likeImage(req: Request, res: Response): Promise<void> {
-    verifyToken(req, res, async () => {
-      try {
-        const image = await ImageService.likeImage(+req.params.id);
-        res.status(200).json(image);
-      } catch (error) {
-        if (error instanceof InternalServerError) {
-          res.status(error.statusCode).json({ error: error.message });
-        } else {
-          res.status(500).json({ error: "Unknown error" });
-        }
-      }
-    });
-  }
-
-  static async dislikeImage(req: Request, res: Response): Promise<void> {
-    verifyToken(req, res, async () => {
-      try {
-        const image = await ImageService.dislikeImage(+req.params.id);
-        res.status(200).json(image);
+        await ImageVoteService.deleteVote(req.body, req.body);
+        res.status(204).send();
       } catch (error) {
         if (error instanceof InternalServerError) {
           res.status(error.statusCode).json({ error: error.message });

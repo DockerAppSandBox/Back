@@ -12,6 +12,9 @@ export interface CreateImageVoteDTO {
     like: boolean;
 }
 
+
 export interface UpdateImageVoteDTO {
+    userId: string;
+    imageId: number;
     like: boolean;
 }

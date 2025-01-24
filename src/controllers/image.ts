@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import ImageService from '../services/image';
-import { PrismaClient, Prisma } from "@prisma/client";
+import ImageVoteService from '../services/imageVote';
 
 import {
   NotFoundError,
@@ -90,8 +90,33 @@ export default class ImageController {
   static async likeImage(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const image = await ImageService.likeImage(+req.params.id);
-        res.status(200).json(image);
+        const userId = req.user.id;
+        const imageId = +req.params.id;
+
+        const existingVote = await ImageVoteService.getVote(userId, imageId);
+
+        if (existingVote) {
+          if (existingVote.like) {
+            await ImageVoteService.deleteVote(userId, imageId);
+            return res.status(200).json({ message: "Vote removed." });
+          } else {
+            // Si l'utilisateur avait disliké, mettre à jour le vote pour un like
+            const updatedVote = await ImageVoteService.updateVote({
+              userId,
+              imageId,
+              like: true, // Changer le dislike en like
+            });
+            return res.status(200).json(updatedVote);
+          }
+        } else {
+          // Si aucun vote n'existe, créer un nouveau vote avec like = true
+          const newVote = await ImageVoteService.voteForImage({
+            userId,
+            imageId,
+            like: true,
+          });
+          return res.status(201).json(newVote);
+        }
       } catch (error) {
         if (error instanceof InternalServerError) {
           res.status(error.statusCode).json({ error: error.message });
@@ -105,8 +130,34 @@ export default class ImageController {
   static async dislikeImage(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const image = await ImageService.dislikeImage(+req.params.id);
-        res.status(200).json(image);
+        const userId = req.user.id;
+        const imageId = +req.params.id;
+
+        const existingVote = await ImageVoteService.getVote(userId, imageId);
+
+        if (existingVote) {
+          if (!existingVote.like) {
+            // Si l'utilisateur a déjà disliké, supprimer le vote
+            await ImageVoteService.deleteVote(userId, imageId);
+            return res.status(200).json({ message: "Vote removed." });
+          } else {
+            // Si l'utilisateur avait liké, mettre à jour le vote pour un dislike
+            const updatedVote = await ImageVoteService.updateVote({
+              userId,
+              imageId,
+              like: false, // Changer le like en dislike
+            });
+            return res.status(200).json(updatedVote);
+          }
+        } else {
+          // Si aucun vote n'existe, créer un nouveau vote avec like = false
+          const newVote = await ImageVoteService.voteForImage({
+            userId,
+            imageId,
+            like: false,
+          });
+          return res.status(201).json(newVote);
+        }
       } catch (error) {
         if (error instanceof InternalServerError) {
           res.status(error.statusCode).json({ error: error.message });
