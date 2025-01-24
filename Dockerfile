@@ -23,8 +23,8 @@ FROM node:20.10.0-alpine AS runner
 WORKDIR /app
 
 COPY --from=builder /app/dist dist
-COPY --from=builder /app/package-lock.json package-lock.json
 COPY --from=builder /app/package.json package.json
+COPY --from=builder /app/package-lock.json package-lock.json
 COPY --from=builder /app/prisma prisma
 
 
@@ -34,7 +34,6 @@ RUN npm ci --production --frozen-lockfile
 
 RUN npm install dotenv --save
 
-RUN npm cache clean --force
-
+# RUN npm cache clean --force
 
 CMD ["npm", "run", "start"]
