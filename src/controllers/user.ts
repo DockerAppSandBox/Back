@@ -49,14 +49,14 @@ export default class UserController {
 
   // Créer un utilisateur
   static async createUser(req: Request, res: Response): Promise<void> {
-      const { email, name } = req.body;
+      const { email, password } = req.body;
 
       if (!email) {
         res.status(400).json({ error: "L'email est requis" });
       }
 
       try {
-        const newUser = await UserService.createUser({ email, name });
+        const newUser = await UserService.createUser({ email, password });
         res.status(201).json(newUser);
       } catch (error: any) {
         if (error.message === "EMAIL_ALREADY_EXISTS") {
@@ -71,14 +71,14 @@ export default class UserController {
   static async updateUser(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       const { id } = req.params;
-      const { name } = req.body;
+      const { password } = req.body;
 
-      if (!name) {
-        throw new BadRequestError("Le champ 'name' est requis");
+      if (!password) {
+        throw new BadRequestError("Le champ 'password' est requis");
       }
 
       try {
-        const updatedUser = await UserService.updateUser(id, { name });
+        const updatedUser = await UserService.updateUser(id, { password });
         if (!updatedUser) throw new NotFoundError("Utilisateur non trouvé");
         res.status(200).json(updatedUser);
       } catch (error) {
