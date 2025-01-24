@@ -34,4 +34,4 @@ ENV NODE_ENV=production
 RUN npm ci --frozen-lockfile 
 RUN npm cache clean --force
 
-CMD ["node", "start"]
+CMD ["npm", "run", "start"]
