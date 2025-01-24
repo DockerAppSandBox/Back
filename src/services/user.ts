@@ -14,11 +14,6 @@ export default class UserService {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     return existingUser !== null;
     }
-        
-  // Test de connexion simple
-  static async getTests(): Promise<string> {
-    return "Hello, world!";
-  }
 
   // Obtenir tous les utilisateurs
   static async getAllUsers(): Promise<User[]> {

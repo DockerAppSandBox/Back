@@ -13,18 +13,6 @@ import verifyToken from "../middleware/auth";
 
 export default class UserController {
 
-static async GetTest(req: Request, res: Response): Promise<void> {
-    try {
-      const getTest = await UserService.getTests();
-      res.status(200).json(getTest);
-    } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: error instanceof Error ? error.message : "Unknown error",
-        });
-    }
-  }
   static async getAllUsers(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
