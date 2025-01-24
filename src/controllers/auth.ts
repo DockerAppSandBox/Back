@@ -29,7 +29,11 @@ export class AuthController {
     } catch (error) {
       if (error instanceof InternalServerError) {
         res.status(error.statusCode).json({ error: error.message });
-      } else {
+      }
+      else if (error instanceof BadRequestError) {
+        res.status(error.statusCode).json({ error: error.message });
+      }
+      else {
         res.status(500).json({ error: "Unknown error" });
       }
     }
