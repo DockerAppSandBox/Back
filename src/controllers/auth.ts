@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthService } from '../services/auth';
 import {
   InternalServerError,
+  BadRequestError
 } from "../http_code/error-code";
 
 export class AuthController {
@@ -10,6 +11,9 @@ export class AuthController {
       const result = await AuthService.register(req.body);
       res.status(201).json(result);
     } catch (error) {
+      if (error instanceof BadRequestError) {
+        res.status(error.statusCode).json({ error: error.message });
+      }
       if (error instanceof InternalServerError) {
         res.status(error.statusCode).json({ error: error.message });
       } else {

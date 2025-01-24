@@ -1,14 +1,10 @@
 import { Request, Response } from 'express';
 import UserService from "../services/user";
-import { PrismaClient, Prisma } from "@prisma/client";
-
 import {
     NotFoundError,
     InternalServerError,
     BadRequestError,
   } from "../http_code/error-code";
-
-import { CreateUserDTO, UpdateUserDTO } from "../entity/user";
 import verifyToken from "../middleware/auth";
 
 export default class UserController {
