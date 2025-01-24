@@ -27,12 +27,9 @@ COPY --from=builder /app/package-lock.json package-lock.json
 COPY --from=builder /app/prisma prisma
 
 
-RUN npm install --prod
+RUN npm install --production
 
 ENV NODE_ENV=production
-
-
-RUN npm install dotenv --save
 
 # RUN npm cache clean --force
 
