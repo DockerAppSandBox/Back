@@ -14,17 +14,11 @@ export default class UserService {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     return existingUser !== null;
     }
-        
-  // Test de connexion simple
-  static async getTests(): Promise<string> {
-    return "Hello, world!";
-  }
 
   // Obtenir tous les utilisateurs
   static async getAllUsers(): Promise<User[]> {
     try {
-      const users = await prisma.user.findMany();
-      return users;
+      return await prisma.user.findMany();
     } catch (error) {
       throw new InternalServerError(
         `Failed to retrieve users: ${(error as Error).message}`
@@ -33,7 +27,7 @@ export default class UserService {
   }
 
   // Obtenir un utilisateur par ID (UUID)
-  static async getUserById(id: string): Promise<User> {
+  static async getUserById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({ where: { id } });
       if (!user) {
@@ -60,8 +54,7 @@ export default class UserService {
       }
 
       // Si l'email n'existe pas, créer l'utilisateur
-      const newUser = await prisma.user.create({ data });
-      return newUser;
+      return await prisma.user.create({ data });
     } catch (error) {
       throw new InternalServerError(
         error instanceof Error ? error.message : "Unknown error while creating user"
@@ -77,11 +70,7 @@ export default class UserService {
         throw new NotFoundError(`User with ID ${id} not found`);
       }
 
-      const updatedUser = await prisma.user.update({
-        where: { id },
-        data,
-      });
-      return updatedUser;
+      return await prisma.user.update({ where: { id }, data });
     } catch (error) {
       throw new InternalServerError(
         isError(error) ? error.message : "Unknown error while updating user"

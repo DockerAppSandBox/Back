@@ -1,30 +1,14 @@
 import { Request, Response } from 'express';
 import UserService from "../services/user";
-import { PrismaClient, Prisma } from "@prisma/client";
-
 import {
     NotFoundError,
     InternalServerError,
     BadRequestError,
   } from "../http_code/error-code";
-
-import { CreateUserDTO, UpdateUserDTO } from "../entity/user";
 import verifyToken from "../middleware/auth";
 
 export default class UserController {
 
-static async GetTest(req: Request, res: Response): Promise<void> {
-    try {
-      const getTest = await UserService.getTests();
-      res.status(200).json(getTest);
-    } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: error instanceof Error ? error.message : "Unknown error",
-        });
-    }
-  }
   static async getAllUsers(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
@@ -41,7 +25,7 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Obtenir un utilisateur par ID
-  static async getUserById(req: Request<{ id: string }>, res: Response): Promise<void> {
+  static async getUserById(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
         const user = await UserService.getUserById(req.params.id);
@@ -60,15 +44,15 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Créer un utilisateur
-  static async createUser(req: Request<{}, {}, CreateUserDTO>, res: Response): Promise<void> {
-      const { email, name } = req.body;
+  static async createUser(req: Request, res: Response): Promise<void> {
+      const { email, password } = req.body;
 
       if (!email) {
         res.status(400).json({ error: "L'email est requis" });
       }
 
       try {
-        const newUser = await UserService.createUser({ email, name });
+        const newUser = await UserService.createUser({ email, password });
         res.status(201).json(newUser);
       } catch (error: any) {
         if (error.message === "EMAIL_ALREADY_EXISTS") {
@@ -80,17 +64,17 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Mettre à jour un utilisateur
-  static async updateUser(req: Request<{ id: string }, {}, UpdateUserDTO>, res: Response): Promise<void> {
+  static async updateUser(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       const { id } = req.params;
-      const { name } = req.body;
+      const { password } = req.body;
 
-      if (!name) {
-        throw new BadRequestError("Le champ 'name' est requis");
+      if (!password) {
+        throw new BadRequestError("Le champ 'password' est requis");
       }
 
       try {
-        const updatedUser = await UserService.updateUser(id, { name });
+        const updatedUser = await UserService.updateUser(id, { password });
         if (!updatedUser) throw new NotFoundError("Utilisateur non trouvé");
         res.status(200).json(updatedUser);
       } catch (error) {
@@ -104,7 +88,7 @@ static async GetTest(req: Request, res: Response): Promise<void> {
   }
 
   // Supprimer un utilisateur
-  static async deleteUser(req: Request<{ id: string }>, res: Response): Promise<void> {
+  static async deleteUser(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
         const deletedUser = await UserService.deleteUser(req.params.id);
