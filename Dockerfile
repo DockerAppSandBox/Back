@@ -32,7 +32,7 @@ ENV NODE_ENV=production
 
 RUN npm ci --production --frozen-lockfile
 
-RUN npm install dotenv
+RUN npm install dotenv --save
 
 RUN npm cache clean --force
 
