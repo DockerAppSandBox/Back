@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN npm ci --frozen-lockfile 
+RUN npm install 
 
 COPY prisma ./prisma
 
@@ -28,6 +28,8 @@ COPY --from=builder /app/prisma .
 
 
 RUN npm install 
+
+RUN cat package.json
 
 # ENV NODE_ENV=production
 
