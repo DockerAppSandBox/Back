@@ -28,9 +28,13 @@ COPY --from=builder /app/package.json package.json
 COPY --from=builder /app/prisma prisma
 
 
+ENV NODE_ENV=production
+
 RUN npm ci --production --frozen-lockfile
+
+RUN npm install dotenv
+
 RUN npm cache clean --force
 
-ENV NODE_ENV=production
 
 CMD ["npm", "run", "start"]
