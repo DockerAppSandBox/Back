@@ -1,6 +1,6 @@
-import express from "express";
 import cors from 'cors';
 import helmet from "helmet";
+import express from "express";
 import compression from 'compression';
 import prisma from "./config/database";
 import * as os from "os";
