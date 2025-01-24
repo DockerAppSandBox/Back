@@ -34,6 +34,4 @@ ENV NODE_ENV=production
 RUN npm ci --frozen-lockfile 
 RUN npm cache clean --force
 
-EXPOSE 3000
-
-CMD ["node", "build-prod"]
+CMD ["node", "start"]
