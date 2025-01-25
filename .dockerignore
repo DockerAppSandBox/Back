@@ -1,24 +1,4 @@
-node_modules/
-
-
-
-# Environment variables
+node_modules
+.git
+.vscode
 .env
-.env.local
-.env.development
-.env.test
-.env.production
-
-# Ignore editor specific files
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
-
-# Ignore git related files
-.git/
-.gitignore
-
-
-# ignore src
-src/
