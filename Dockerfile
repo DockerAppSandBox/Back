@@ -55,7 +55,7 @@ COPY prisma ./prisma
 # Install dependencies in production mode
 RUN npm install --prod
 
-RUN npm build
+RUN npm RUN build
 
 
 # Start the api in dev mode
