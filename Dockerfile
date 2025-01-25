@@ -58,9 +58,6 @@ RUN pnpm install --prod
 
 RUN pnpm build
 
-# Copy dist files
-COPY dist ./dist
-
 
 # Start the api in dev mode
 CMD pnpm run start
