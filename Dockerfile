@@ -16,6 +16,9 @@ RUN npm run build
 
 FROM node:20.10.0-alpine AS runner
 
+RUN chmod -R 755 /app
+
+
 WORKDIR /app
 
 COPY --from=builder /app/dist dist
