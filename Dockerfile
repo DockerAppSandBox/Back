@@ -61,5 +61,5 @@ RUN npm run build
 
 
 # Start the api in dev mode
-CMD npm run start
+CMD npm run build-container
 
