@@ -48,6 +48,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json ./
 
+COPY . .
+
 # Copy prisma files
 COPY prisma ./prisma
 
