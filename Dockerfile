@@ -38,6 +38,8 @@
 
 FROM node:20.10.0-alpine
 
+RUN npm cache clean --force
+
 # Install pnpm
 RUN npm install -g pnpm
 
