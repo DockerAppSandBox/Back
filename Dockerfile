@@ -1,36 +1,63 @@
-FROM node:20.10.0-alpine AS builder
+# FROM node:20.10.0-alpine AS builder
 
+# WORKDIR /app
+
+# COPY package.json package-lock.json ./
+
+# RUN npm install 
+
+# COPY prisma ./prisma
+
+# COPY . .
+
+# RUN npx prisma generate
+
+# RUN npm run build
+
+# FROM node:20.10.0-alpine AS runner
+
+
+# WORKDIR /app
+
+# RUN chmod -R 755 /app
+
+# COPY --from=builder /app/dist dist
+# COPY --from=builder /app/package.json package.json
+# COPY --from=builder /app/package-lock.json package-lock.json
+
+# RUN npm ci --frozen-lockfile
+
+# RUN cat package.json
+# RUN ls node_modules
+# # ENV NODE_ENV=production
+
+# # RUN npm cache clean --force
+
+# CMD ["npm", "run", "start"]
+
+
+FROM node:20.10.0-alpine
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Create working directory
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Copy package files
+COPY package.json ./
 
-RUN npm install 
-
+# Copy prisma files
 COPY prisma ./prisma
 
-COPY . .
 
-RUN npx prisma generate
+# Install dependencies in production mode
+RUN pnpm install --prod
 
-RUN npm run build
+# Copy dist files
+COPY dist ./dist
 
-FROM node:20.10.0-alpine AS runner
 
+# Start the api in dev mode
+CMD pnpm run start
 
-WORKDIR /app
-
-RUN chmod -R 755 /app
-
-COPY --from=builder /app/dist dist
-COPY --from=builder /app/package.json package.json
-COPY --from=builder /app/package-lock.json package-lock.json
-
-RUN npm ci --frozen-lockfile
-
-RUN cat package.json
-RUN ls node_modules
-# ENV NODE_ENV=production
-
-# RUN npm cache clean --force
-
-CMD ["npm", "run", "start"]
