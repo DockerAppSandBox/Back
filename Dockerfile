@@ -54,6 +54,8 @@ COPY prisma ./prisma
 # Install dependencies in production mode
 RUN pnpm install --prod
 
+RUN pnpm build
+
 # Copy dist files
 COPY dist ./dist
 
