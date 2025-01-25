@@ -33,7 +33,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
     }
 });
 
-const port = process.env.PORT || 8000;
+const port = process.env.BACK_PORT || 8000;
 
 function getNetworkAddress() {
   const interfaces = os.networkInterfaces();
