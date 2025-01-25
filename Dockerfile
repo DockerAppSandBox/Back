@@ -2,7 +2,7 @@ FROM node:20.10.0-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json package-lock.json
+COPY package.json package-lock.json ./
 
 RUN npm install 
 
@@ -11,8 +11,6 @@ COPY prisma ./prisma
 COPY . .
 
 RUN npx prisma generate
-
-RUN npm i --save-dev @types/cors @types/compression @types/express @types/node
 
 RUN npm run build
 
