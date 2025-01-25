@@ -41,7 +41,6 @@ FROM node:20.10.0-alpine
 RUN npm cache clean --force
 
 # Install pnpm
-RUN npm install -g pnpm
 
 # Create working directory
 WORKDIR /app
@@ -54,11 +53,11 @@ COPY prisma ./prisma
 
 
 # Install dependencies in production mode
-RUN pnpm install --prod
+RUN npm install --prod
 
-RUN pnpm build
+RUN npm build
 
 
 # Start the api in dev mode
-CMD pnpm run start
+CMD npm run start
 
