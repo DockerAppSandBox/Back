@@ -1,5 +1,5 @@
 export interface Image {
-    id: number;
+    id: string;
     imageData: string;
     createdAt: Date;
     likesCount: number;

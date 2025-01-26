@@ -24,13 +24,10 @@ export default class ImageVoteService {
 
             if (existingVote) {
                 if (existingVote.like === data.like) {
-                    // Si le vote existe déjà et est identique, renvoyer une erreur
-                    throw new Error(
+                    throw new BadRequestError(
                         `You have already ${data.like ? "liked" : "disliked"} this image.`
                     );
                 }
-
-                // Mettre à jour le vote si la valeur est différente
                 return await prisma.imageVote.update({
                     where: {
                         userId_imageId: {
@@ -43,7 +40,6 @@ export default class ImageVoteService {
                     },
                 });
             } else {
-                // Créer un nouveau vote
                 return await prisma.imageVote.create({
                     data: {
                         userId: data.userId,
@@ -53,14 +49,13 @@ export default class ImageVoteService {
                 });
             }
         } catch (error) {
-            if (error instanceof Error) {
-                throw new InternalServerError(error.message);
-            }
-            throw new InternalServerError("Error voting for image.");
+            throw new InternalServerError(
+                error instanceof Error ? error.message : "Unknown error while  voting for image"
+            );
         }
     }
 
-    static async getVotesByImageId(imageId: number): Promise<ImageVote[]> {
+    static async getVotesByImageId(imageId: string): Promise<ImageVote[]> {
         try {
             return await prisma.imageVote.findMany({
                 where: {
@@ -68,7 +63,9 @@ export default class ImageVoteService {
                 },
             });
         } catch (error) {
-            throw new Error("Error fetching votes for image.");
+            throw new InternalServerError(
+                error instanceof Error ? error.message : "Unknown error while  fetching votes for image"
+            );
         }
     }
 
@@ -89,14 +86,13 @@ export default class ImageVoteService {
             return updatedVote;
         } catch (error: any) {
             if (error.code === "P2025") {
-                // Gérer les cas où le vote n'existe pas
-                throw new Error("Vote not found.");
+                throw new NotFoundError("Vote not found.");
             }
             throw new InternalServerError("Error updating vote.");
         }
     }
 
-    static async deleteVote(userId: string, imageId: number): Promise<void> {
+    static async deleteVote(userId: string, imageId: string): Promise<void> {
         try {
             await prisma.imageVote.delete({
                 where: {
@@ -107,15 +103,15 @@ export default class ImageVoteService {
                 },
             });
         } catch (error) {
-            throw new Error("Error deleting vote.");
+            throw new InternalServerError("Error deleting vote.");
         }
     }
 
-    static async getVote(userId: string, imageId: number): Promise<ImageVote | null> {
+    static async getVote(userId: string, imageId: string): Promise<ImageVote | null> {
         try {
             return await prisma.imageVote.findUnique({
                 where: {
-                    userId_imageId: { userId, imageId }, // Si vous avez défini une clé unique dans Prisma
+                    userId_imageId: { userId, imageId },
                 },
             });
         } catch (error) {

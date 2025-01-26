@@ -1,4 +1,4 @@
-import { NotFoundError, InternalServerError, BadRequestError } from "../http_code/error-code";
+import { NotFoundError, InternalServerError } from "../http_code/error-code";
 import { Image, CreateImageDTO, UpdateImageDTO } from "../entity/image";
 import { PrismaClient } from "@prisma/client";
 
@@ -20,19 +20,26 @@ export default class ImageService {
             }));
             return formattedImages;
         } catch (error) {
-            throw new Error('Error fetching images.');
+            throw new InternalServerError(
+                `Failed to retrieve images: ${(error as Error).message}`
+            );
         }
     }
 
-    static async getImageById(id: number): Promise<Image | null> {
+    static async getImageById(id: string): Promise<Image | null> {
         try {
             const image = await prisma.image.findUnique({ where: { id } });
             if (!image) {
-                throw new Error("Image not found.");
+                throw new NotFoundError(`Image with ID ${id} not found`);
             }
             return image;
         } catch (error) {
-            throw new Error("Error fetching image.");
+            if (error instanceof NotFoundError) {
+                throw new NotFoundError(`Image with ID ${id} not found`);
+            }
+            throw new InternalServerError(
+                `Failed to retrieve image: ${(error as Error).message}`
+            );
         }
     }
 
@@ -40,41 +47,65 @@ export default class ImageService {
         try {
             const image = await prisma.image.create({
                 data: {
-                    imageData: data.imageData, // Base64 string
+                    imageData: data.imageData,
                 },
             });
             return image;
         } catch (error) {
-            throw new Error("Error creating image.");
+            throw new InternalServerError(
+                error instanceof Error ? error.message : "Unknown error while creating image"
+            );
         }
     }
 
-    static async updateImage(id: number, data: UpdateImageDTO): Promise<Image> {
+    static async updateImage(id: string, data: UpdateImageDTO): Promise<Image> {
         try {
+            const existingImage = await this.getImageById(id);
+
+            if (!existingImage) {
+                throw new NotFoundError(`Image with ID ${id} not found`);
+            }
+
             const image = await prisma.image.update({
                 where: { id },
                 data: {
                     ...data,
-                    imageData: data.imageData || undefined, // Update Base64 string if provided
+                    imageData: data.imageData || undefined,
                 },
             });
             return image;
         } catch (error) {
-            throw new Error("Error updating image.");
+            throw new InternalServerError(
+                isError(error) ? error.message : "Unknown error while updating image"
+            );
         }
     }
 
-    static async deleteImage(id: number): Promise<void> {
+    static async deleteImage(id: string): Promise<string> {
         try {
+            const existingImage = await this.getImageById(id);
+
+            if (!existingImage) {
+                throw new NotFoundError(`Image with ID ${id} not found`);
+            }
             await prisma.image.delete({ where: { id } });
+            return `Image with ID ${id} deleted successfully`;
         } catch (error) {
-            throw new Error("Error deleting image.");
+            throw new InternalServerError(
+                isError(error) ? error.message : "Unknown error while deleting image"
+            );
         }
     }
 
     // Méthode pour liker une image
-    static async likeImage(id: number): Promise<Image> {
+    static async likeImage(id: string): Promise<Image> {
         try {
+            const existingImage = await this.getImageById(id);
+
+            if (!existingImage) {
+                throw new NotFoundError(`Image with ID ${id} not found`);
+            }
+
             const image = await prisma.image.update({
                 where: { id },
                 data: {
@@ -85,13 +116,21 @@ export default class ImageService {
             });
             return image;
         } catch (error) {
-            throw new Error("Error liking image.");
+            throw new InternalServerError(
+                error instanceof Error ? error.message : "Unknown error while add a like"
+            );
         }
     }
 
     // Méthode pour disliker une image
-    static async dislikeImage(id: number): Promise<Image> {
+    static async dislikeImage(id: string): Promise<Image> {
         try {
+            const existingImage = await this.getImageById(id);
+
+            if (!existingImage) {
+                throw new NotFoundError(`Image with ID ${id} not found`);
+            }
+
             const image = await prisma.image.update({
                 where: { id },
                 data: {
@@ -102,7 +141,9 @@ export default class ImageService {
             });
             return image;
         } catch (error) {
-            throw new Error("Error disliking image.");
+            throw new InternalServerError(
+                error instanceof Error ? error.message : "Unknown error while add a like"
+            );
         }
     }
 }

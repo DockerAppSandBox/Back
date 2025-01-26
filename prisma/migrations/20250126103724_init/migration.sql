@@ -10,7 +10,7 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Image" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "image_data" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "likes_count" INTEGER NOT NULL DEFAULT 0,
@@ -21,9 +21,9 @@ CREATE TABLE "Image" (
 
 -- CreateTable
 CREATE TABLE "ImageVote" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "imageId" INTEGER NOT NULL,
+    "imageId" TEXT NOT NULL,
     "like" BOOLEAN NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

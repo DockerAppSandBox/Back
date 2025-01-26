@@ -16,7 +16,7 @@ model User {
 }
 
 model Image {
-  id            Int         @id @default(autoincrement())
+  id            String      @id @default(uuid())
   imageData     String      @map("image_data")
   createdAt     DateTime    @default(now()) @map("created_at")
   likesCount    Int         @default(0) @map("likes_count")
@@ -25,11 +25,11 @@ model Image {
 }
 
 model ImageVote {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   
-  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
-  imageId   Int
+  image     Image   @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  imageId   String
   like      Boolean
   createdAt DateTime @default(now()) @map("created_at")
 

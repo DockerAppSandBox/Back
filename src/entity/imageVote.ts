@@ -1,20 +1,20 @@
 export interface ImageVote {
-    id: number;
+    id: string;
     userId: string;
-    imageId: number;
+    imageId: string;
     like: boolean;
     createdAt: Date;
 }
 
 export interface CreateImageVoteDTO {
     userId: string;
-    imageId: number;
+    imageId: string;
     like: boolean;
 }
 
 
 export interface UpdateImageVoteDTO {
     userId: string;
-    imageId: number;
+    imageId: string;
     like: boolean;
 }

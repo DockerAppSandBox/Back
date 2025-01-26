@@ -29,7 +29,7 @@ export default class ImageVoteController  {
   static async getVotesByImageId(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const votes  = await ImageVoteService.getVotesByImageId(+req.params.imageId);
+        const votes  = await ImageVoteService.getVotesByImageId(req.params.imageId);
         res.status(200).json(votes);
       } catch (error) {
         if (error instanceof InternalServerError) {

@@ -30,10 +30,12 @@ export default class ImageController {
   static async getImageById(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const image = await ImageService.getImageById(+req.params.id);
+        const image = await ImageService.getImageById(req.params.id);
         res.status(200).json(image);
       } catch (error) {
         if (error instanceof InternalServerError) {
+          res.status(error.statusCode).json({ error: error.message });
+        } else if (error instanceof NotFoundError) {
           res.status(error.statusCode).json({ error: error.message });
         } else {
           res.status(500).json({ error: "Unknown error" });
@@ -60,7 +62,7 @@ export default class ImageController {
   static async updateImage(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const image = await ImageService.updateImage(+req.params.id, req.body);
+        const image = await ImageService.updateImage(req.params.id, req.body);
         res.status(200).json(image);
       } catch (error) {
         if (error instanceof InternalServerError) {
@@ -75,7 +77,7 @@ export default class ImageController {
   static async deleteImage(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const image = await ImageService.deleteImage(+req.params.id);
+        const image = await ImageService.deleteImage(req.params.id);
         res.status(200).json(image);
       } catch (error) {
         if (error instanceof InternalServerError) {
@@ -91,7 +93,7 @@ export default class ImageController {
     verifyToken(req, res, async () => {
       try {
         const userId = req.user?.id as string;
-        const imageId = +req.params.id;
+        const imageId = req.params.id;
 
         const existingVote = await ImageVoteService.getVote(userId, imageId);
 
@@ -100,16 +102,14 @@ export default class ImageController {
             await ImageVoteService.deleteVote(userId, imageId);
             return res.status(200).json({ message: "Vote removed." });
           } else {
-            // Si l'utilisateur avait disliké, mettre à jour le vote pour un like
             const updatedVote = await ImageVoteService.updateVote({
               userId,
               imageId,
-              like: true, // Changer le dislike en like
+              like: true,
             });
             return res.status(200).json(updatedVote);
           }
         } else {
-          // Si aucun vote n'existe, créer un nouveau vote avec like = true
           const newVote = await ImageVoteService.voteForImage({
             userId,
             imageId,
@@ -131,7 +131,7 @@ export default class ImageController {
     verifyToken(req, res, async () => {
       try {
         const userId = req.user?.id as string;
-        const imageId = +req.params.id;
+        const imageId = req.params.id;
 
         const existingVote = await ImageVoteService.getVote(userId, imageId);
 
