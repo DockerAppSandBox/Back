@@ -1,37 +1,28 @@
-FROM node:20.10.0-alpine AS builder
+FROM node:20.10.0-alpine
 
+RUN npm cache clean --force
+
+# Install pnpm
+
+# Create working directory
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-
-RUN npm install --production
-
-COPY prisma ./prisma
+# Copy package files
+COPY package.json ./
 
 COPY . .
 
-RUN npm install -g typescript
+# Copy prisma files
+COPY prisma ./prisma
 
-RUN npx prisma generate
 
-RUN npm i --save-dev @types/cors @types/compression @types/express @types/node
+# Install dependencies in production mode
+RUN npm install
 
 RUN npm run build
 
-RUN rm -rf node_modules
+RUN rm -rf src/
 
-FROM node:20.10.0-alpine AS runner
+# Start the api in dev mode
+CMD npm run build-prod
 
-WORKDIR /app
-
-COPY --from=builder /app/dist dist
-COPY --from=builder /app/package-lock.json package-lock.json
-COPY --from=builder /app/package.json package.json
-COPY --from=builder /app/prisma prisma
-
-ENV NODE_ENV=production
-
-RUN npm ci --frozen-lockfile 
-RUN npm cache clean --force
-
-CMD ["node", "start"]
