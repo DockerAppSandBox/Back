@@ -1,17 +1,31 @@
+networks:
+  mynetwork:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+
 services:
   mydb:
     image: postgres
     container_name: bdd
     ports:
-      - "5432:5432"
+      - "${BDD_PORT}:${BDD_PORT}"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      mynetwork: 
-        ipv4_address: 172.28.0.3
+      - mynetwork
+  
+  python-server:
+    image: ghcr.io/dockerappsandbox/pythonserver:pre-prod
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      - mydb
 
   back:
     build: 
@@ -21,20 +35,14 @@ services:
       - ./src:/app/src
       - ./node_modules:/app/node_modules
     ports: 
-      - "3000:3000"
+      - "${BACK_PORT}:${BACK_PORT}"
     environment:
       DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
+      BACK_PORT: ${BACK_PORT}
     depends_on:
       - mydb
+      - python-server
+    restart: unless-stopped
     networks:
-      mynetwork:
-        ipv4_address: 172.28.0.2
-
-networks:
-  mynetwork:
-    external: true
-
-volumes:
-  postgres_data:
-    driver: local
+      - mynetwork
