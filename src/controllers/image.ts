@@ -90,7 +90,7 @@ export default class ImageController {
   static async likeImage(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const userId = req.user.id;
+        const userId = req.user?.id as string;
         const imageId = +req.params.id;
 
         const existingVote = await ImageVoteService.getVote(userId, imageId);
@@ -130,7 +130,7 @@ export default class ImageController {
   static async dislikeImage(req: Request, res: Response): Promise<void> {
     verifyToken(req, res, async () => {
       try {
-        const userId = req.user.id;
+        const userId = req.user?.id as string;
         const imageId = +req.params.id;
 
         const existingVote = await ImageVoteService.getVote(userId, imageId);
