@@ -11,10 +11,9 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Image" (
     "id" TEXT NOT NULL,
-    "image_data" TEXT NOT NULL,
+    "imageUrl" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "likes_count" INTEGER NOT NULL DEFAULT 0,
-    "dislikes_count" INTEGER NOT NULL DEFAULT 0,
 
     CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
 );

@@ -17,10 +17,9 @@ model User {
 
 model Image {
   id            String      @id @default(uuid())
-  imageData     String      @map("image_data")
+  imageUrl      String      
   createdAt     DateTime    @default(now()) @map("created_at")
   likesCount    Int         @default(0) @map("likes_count")
-  dislikesCount Int         @default(0) @map("dislikes_count")
   votes         ImageVote[]
 }
 
