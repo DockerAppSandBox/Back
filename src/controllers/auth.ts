@@ -38,4 +38,10 @@ export class AuthController {
       }
     }
   }
+
+  static async test(req:Request, res:Response) {
+    res.status(200).json({hello:"Helllo world"});
+  }
+
+
 }
