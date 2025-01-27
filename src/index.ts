@@ -2,6 +2,10 @@ import cors from 'cors';
 import helmet from "helmet";
 import express from "express";
 import compression from 'compression';
+import cors from 'cors';
+import helmet from "helmet";
+import express from "express";
+import compression from 'compression';
 import prisma from "./config/database";
 import * as os from "os";
 import authRoutes from './routes/auth';
@@ -53,6 +57,7 @@ function getNetworkAddress() {
   return "localhost";
 }
 
+// Démarrage du serveur
 // Démarrage du serveur
 let server = app.listen(port, () => {
   const address = getNetworkAddress();
