@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import ImageService from '../services/image';
 import ImageVoteService from '../services/imageVote';
+import { Image, CreateImageDTO, UpdateImageDTO } from "../entity/image";
+
 
 import {
   NotFoundError,
@@ -9,10 +11,11 @@ import {
 } from "../http_code/error-code";
 
 import verifyToken from "../middleware/auth";
+import { error } from 'console';
 
 export default class ImageController {
 
-  static async getAllImages(req: Request, res: Response): Promise<void> {
+  static async getAllImages(req: Request, res: Response) {
     verifyToken(req, res, async () => {
       try {
         const images = await ImageService.getAllImages();
@@ -27,7 +30,7 @@ export default class ImageController {
     });
   }
 
-  static async getImageById(req: Request, res: Response): Promise<void> {
+  static async getImageById(req: Request, res: Response) {
     verifyToken(req, res, async () => {
       try {
         const image = await ImageService.getImageById(req.params.id);
@@ -44,10 +47,17 @@ export default class ImageController {
     });
   }
 
-  static async createImage(req: Request, res: Response): Promise<void> {
+  static async createImage(
+    req: Request<{},{},CreateImageDTO>,
+    res: Response
+    ) {
     verifyToken(req, res, async () => {
+      const {imageUrl} = req.body
+      if(!imageUrl || imageUrl.length == 0){
+       return res.status(500).json({error: "imageUrl ne peux pas être vide"})
+      }
       try {
-        const newImage = await ImageService.createImage(req.body);
+        const newImage = await ImageService.createImage(imageUrl);
         res.status(201).json(newImage);
       } catch (error) {
         if (error instanceof InternalServerError) {
@@ -59,7 +69,7 @@ export default class ImageController {
     });
   }
 
-  static async updateImage(req: Request, res: Response): Promise<void> {
+  static async updateImage(req: Request, res: Response) {
     verifyToken(req, res, async () => {
       try {
         const image = await ImageService.updateImage(req.params.id, req.body);
@@ -74,7 +84,8 @@ export default class ImageController {
     });
   }
 
-  static async deleteImage(req: Request, res: Response): Promise<void> {
+
+  static async deleteImage(req: Request, res: Response) {
     verifyToken(req, res, async () => {
       try {
         const image = await ImageService.deleteImage(req.params.id);
@@ -89,12 +100,11 @@ export default class ImageController {
     });
   }
 
-  static async likeImage(req: Request, res: Response): Promise<void> {
+  static async CreateVote(req: Request, res: Response) {
     verifyToken(req, res, async () => {
       try {
         const userId = req.user?.id as string;
         const imageId = req.params.id;
-
         const existingVote = await ImageVoteService.getVote(userId, imageId);
 
         if (existingVote) {
@@ -119,15 +129,16 @@ export default class ImageController {
         }
       } catch (error) {
         if (error instanceof InternalServerError) {
-          res.status(error.statusCode).json({ error: error.message });
+          return res.status(error.statusCode).json({ error: error.message });
         } else {
-          res.status(500).json({ error: "Unknown error" });
+          return res.status(500).json({ error: "Unknown error" });
         }
       }
     });
   }
 
-  static async dislikeImage(req: Request, res: Response): Promise<void> {
+
+  static async dislikeImage(req: Request, res: Response) {
     verifyToken(req, res, async () => {
       try {
         const userId = req.user?.id as string;

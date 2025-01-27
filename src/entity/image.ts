@@ -1,17 +1,15 @@
 export interface Image {
     id: string;
-    imageData: string;
+    imageUrl: string;
     createdAt: Date;
     likesCount: number;
-    dislikesCount: number;
   }
   
   export interface CreateImageDTO {
-    imageData: string;
+    imageUrl: string;
   }
   
   export interface UpdateImageDTO {
     imageData?: string;
     likesCount?: number;
-    dislikesCount?: number;
   }

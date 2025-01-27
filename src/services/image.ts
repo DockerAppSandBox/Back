@@ -11,20 +11,20 @@ function isError(obj: unknown): obj is Error {
 export default class ImageService {
 
     // Obtenir toutes les images
-    static async getAllImages(): Promise<Image[]> {
-        try {
-            const images = await prisma.image.findMany();
-            const formattedImages = images.map(image => ({
-                ...image,
-                imageData: Buffer.from(image.imageData).toString('base64'),
-            }));
-            return formattedImages;
-        } catch (error) {
+        static async getAllImages(): Promise<Image[]> {
+          try {
+            const images = await prisma.image.findMany({
+              orderBy: { createdAt: "desc" },
+            });
+      
+            return images;
+          } catch (error) {
+            console.error("Error fetching images:", error);
             throw new InternalServerError(
-                `Failed to retrieve images: ${(error as Error).message}`
+              `Failed to retrieve images: ${(error as Error).message}`
             );
+          }
         }
-    }
 
     static async getImageById(id: string): Promise<Image | null> {
         try {
@@ -43,11 +43,11 @@ export default class ImageService {
         }
     }
 
-    static async createImage(data: CreateImageDTO): Promise<Image> {
+    static async createImage(imageUrl: string): Promise<Image> {
         try {
             const image = await prisma.image.create({
                 data: {
-                    imageData: data.imageData,
+                    imageUrl: imageUrl,
                 },
             });
             return image;
@@ -70,7 +70,7 @@ export default class ImageService {
                 where: { id },
                 data: {
                     ...data,
-                    imageData: data.imageData || undefined,
+                    imageUrl: data.imageData || undefined,
                 },
             });
             return image;
@@ -116,6 +116,7 @@ export default class ImageService {
             });
             return image;
         } catch (error) {
+
             throw new InternalServerError(
                 error instanceof Error ? error.message : "Unknown error while add a like"
             );
@@ -134,8 +135,8 @@ export default class ImageService {
             const image = await prisma.image.update({
                 where: { id },
                 data: {
-                    dislikesCount: {
-                        increment: 1,
+                    likesCount: {
+                        decrement: 1,
                     },
                 },
             });
@@ -146,4 +147,5 @@ export default class ImageService {
             );
         }
     }
+
 }
