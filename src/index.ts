@@ -6,6 +6,9 @@ import prisma from "./config/database";
 import * as os from "os";
 import authRoutes from './routes/auth';
 import UserRoutes from './routes/user';
+import ImageRoutes from './routes/image';
+import VoteRoutes from "./routes/vote"
+import '../src/config/initImages';
 import { BadRequestError, InternalServerError } from "./http_code/error-code";
 
 import dotenv from "dotenv";
@@ -22,6 +25,9 @@ app.use(compression());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/user", UserRoutes);
+app.use("/image", ImageRoutes);
+app.use("/vote", VoteRoutes);
+
 
 // Gestion des erreurs
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -48,9 +54,11 @@ function getNetworkAddress() {
 }
 
 // Démarrage du serveur
+// Démarrage du serveur
 let server = app.listen(port, () => {
   const address = getNetworkAddress();
   console.info(`🎆 Server is running at http://${address}:${port} 🎄`);
 });
+
 
 export { app, server, prisma };

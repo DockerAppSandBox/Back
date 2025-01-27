@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import { AuthService } from '../services/auth';
+import { AuthResponse } from '../entity/auth';
 import {
   InternalServerError,
-  BadRequestError
+  BadRequestError,
+  NotFoundError
 } from "../http_code/error-code";
 
-export class AuthController {
+export default class AuthController {
+
   static async register(req: Request, res: Response) {
     try {
       const result = await AuthService.register(req.body);
@@ -22,19 +25,25 @@ export class AuthController {
     }
   }
 
-  static async login(req: Request, res: Response) {
+  static async login(
+    req: Request,
+    res: Response
+  ) : Promise<any>{
     try {
       const result = await AuthService.login(req.body);
-      res.status(200).json(result);
+       return res.status(200).json(result);
     } catch (error) {
-      if (error instanceof InternalServerError) {
-        res.status(error.statusCode).json({ error: error.message });
+      if(error instanceof NotFoundError ){
+        return res.status(error.statusCode).json({error: error.message})
+      }
+      else if (error instanceof InternalServerError) {
+        return res.status(error.statusCode).json({ error: error.message });
       }
       else if (error instanceof BadRequestError) {
-        res.status(error.statusCode).json({ error: error.message });
+        return res.status(error.statusCode).json({ error: error.message });
       }
       else {
-        res.status(500).json({ error: "Unknown error" });
+        return res.status(500).json({ error: "Unknown error" });
       }
     }
   }
