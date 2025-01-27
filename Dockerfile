@@ -39,7 +39,5 @@ RUN rm -rf src/
 # Start the api in dev mode
 CMD npm run build-prod
 
-RUN rm -rf src/
-
 # Start the api in dev mode
 CMD npm run build-prod
